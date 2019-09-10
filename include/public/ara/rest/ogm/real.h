@@ -10,7 +10,7 @@ namespace rest
 namespace ogm
 {
 
-    class Real : public Value
+    class Real : public Value, public Constructible<Real>
     {
     public:
         /**
@@ -34,6 +34,8 @@ namespace ogm
          */
         using ValueType = long double;
 
+        friend Constructible<Real>;
+
     public:
         /**
          * \brief   Returns its value as a C++ data type.
@@ -53,6 +55,12 @@ namespace ogm
         void SetValue(ValueType value) noexcept
         {
             value_ = value;
+        }
+
+    protected:
+        Real *Copy() const override
+        {
+            return new Real(value_);
         }
 
     private:

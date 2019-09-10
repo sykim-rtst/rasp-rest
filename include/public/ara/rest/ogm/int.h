@@ -10,7 +10,7 @@ namespace rest
 namespace ogm
 {
 
-    class Int : public Value
+    class Int : public Value, public Constructible<Int>
     {
     public:
         /**
@@ -34,6 +34,8 @@ namespace ogm
          */
         using ValueType = std::int64_t;
 
+        friend Constructible<Int>;
+
     public:
         /**
          * \brief   Returns its value as a C++ data type.
@@ -53,6 +55,12 @@ namespace ogm
         void SetValue(ValueType value) noexcept
         {
             value_ = value;
+        }
+
+    protected:
+        Int *Copy() const override
+        {
+            return new Int(this->value_);
         }
 
     private:

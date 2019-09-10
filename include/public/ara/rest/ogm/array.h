@@ -14,7 +14,7 @@ namespace rest
 namespace ogm
 {
 
-    class Array : public Value
+    class Array : public Value, public Constructible<Array>
     {
     public:
         /**
@@ -60,6 +60,8 @@ namespace ogm
          * \satisfy [SWS_REST_02042] Syntax Requirement for ara::rest::ogm::Array::ConstValueRange.
          */
         using ConstValueRange = IteratorRange<ConstIterator>;
+
+        friend Constructible<Array>;
 
     public:
         /**
@@ -130,14 +132,14 @@ namespace ogm
          *
          * \satisfy [SWS_REST_02055] Syntax Requirement for ara::rest::ogm::Array::Release.
          */
-        // std::pair<Iterator, std::unique_ptr<Value>> Release(Iterator iterator);
+        std::pair<Iterator, std::unique_ptr<Value>> Release(Iterator iterator);
 
         /**
          * \brief   Replaces an element by a new one without the destroying the old one.
          *
          * \satisfy [SWS_REST_02056] Syntax Requirement for ara::rest::ogm::Array::Replace.
          */
-        // std::unique_ptr<Value> Replace(Iterator iterator, std::unique_ptr<Value> &&value);
+        std::unique_ptr<Value> Replace(Iterator iterator, std::unique_ptr<Value> &&value);
 
         /**
          * \brief   Removes all elements.
@@ -145,6 +147,17 @@ namespace ogm
          * \satisfy [SWS_REST_02057] Syntax Requirement for ara::rest::ogm::Array::Clear.
          */
         void Clear();
+
+    protected:
+        Array *Copy() const override
+        {
+            auto copyed = new Array();
+            std::for_each(value_.begin(), value_.end(), [this, &copyed](const Pointer<Value> &value){
+                copyed->Append(std::move(ogm::Copy(value)));
+            });
+
+            return copyed;
+        }
 
     private:
         ValueType value_;

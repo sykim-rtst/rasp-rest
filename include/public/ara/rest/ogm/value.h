@@ -2,6 +2,7 @@
 #define REST_VALUE_H
 
 #include <ara/rest/ogm/node.h>
+#include <ara/rest/ogm/util.h>
 
 namespace ara
 {
@@ -10,7 +11,7 @@ namespace rest
 namespace ogm
 {
 
-    class Value : public Node
+    class Value : public Node, public Copyable<Value>
     {
     public:
         virtual ~Value() {}

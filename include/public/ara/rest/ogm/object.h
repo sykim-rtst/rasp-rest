@@ -15,7 +15,7 @@ namespace rest
 namespace ogm
 {
 
-    class Object : public Value
+    class Object : public Value, public Constructible<Object>
     {
     public:
         /**
@@ -61,6 +61,8 @@ namespace ogm
          * \satisfy [SWS_REST_02107] Syntax Requirement for ara::rest::ogm::Object::ConstFieldRange.
          */
         using ConstFieldRange = IteratorRange<ConstIterator>;
+
+        friend Constructible<Object>;
 
     public:
         /**
@@ -131,14 +133,14 @@ namespace ogm
          *
          * \satisfy [SWS_REST_02120] Syntax Requirement for ara::rest::ogm::Object::Release.
          */
-        // std::pair<Iterator, Pointer<Field>> Release(Iterator iterator);
+        std::pair<Iterator, Pointer<Field>> Release(Iterator iterator);
 
         /**
          * \brief   Replaces an element by a new one without the destroying the old one.
          *
          * \satisfy [SWS_REST_02121] Syntax Requirement for ara::rest::ogm::Object::Replace.
          */
-        // Pointer<Field> Replace(Iterator iterator, Pointer<Field> &&field);
+        Pointer<Field> Replace(Iterator iterator, Pointer<Field> &&field);
 
         /**
          * \brief   Removes all elements.
@@ -146,6 +148,17 @@ namespace ogm
          * \satisfy [SWS_REST_02122] Syntax Requirement for ara::rest::ogm::Object::Clear.
          */
         void Clear();
+
+    protected:
+        Object *Copy() const override
+        {
+            auto copyed = new Object();
+            std::for_each(value_.begin(), value_.end(), [this, &copyed](const Pointer<Field> &field){
+                copyed->Insert(std::move(ogm::Copy(field)));
+            });
+
+            return copyed;
+        }
 
     private:
         ValueType value_;

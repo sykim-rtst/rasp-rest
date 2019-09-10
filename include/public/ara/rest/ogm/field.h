@@ -12,7 +12,7 @@ namespace rest
 namespace ogm
 {
 
-    class Field : public Node
+    class Field : public Node, public Constructible<Field>, public Copyable<Field>
     {
     public:
         /**
@@ -32,6 +32,8 @@ namespace ogm
         using KeyType = ara::rest::String;
 
         using ValueType = Value;
+
+        friend Constructible<Field>;
 
     public:
         /**
@@ -97,6 +99,12 @@ namespace ogm
             value_ = std::move(value);
 
             return oldValue;
+        }
+
+    public:
+        Field *Copy() const override
+        {
+            return new Field(name_, std::move(ogm::Copy(value_)));
         }
 
     public:

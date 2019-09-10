@@ -1,6 +1,8 @@
 #ifndef REST_NODE_H
 #define REST_NODE_H
 
+#include <ara/rest/support_type.h>
+
 namespace ara
 {
 namespace rest

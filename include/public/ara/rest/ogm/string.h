@@ -11,7 +11,7 @@ namespace rest
 namespace ogm
 {
 
-    class String : public Value
+    class String : public Value, public Constructible<String>
     {
     public:
         /**
@@ -35,6 +35,8 @@ namespace ogm
          */
         using ValueType = ara::rest::String;
 
+        friend Constructible<String>;
+
     public:
         /**
          * \brief   Returns its value as a C++ data type.
@@ -54,6 +56,12 @@ namespace ogm
         void SetValue(ValueType value) noexcept
         {
             value_ = value;
+        }
+
+    protected:
+        String *Copy() const override
+        {
+            return new String(this->value_);
         }
 
     private:

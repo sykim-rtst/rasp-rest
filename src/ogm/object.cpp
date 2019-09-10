@@ -54,6 +54,19 @@ namespace ogm
         return value_.erase(iterator);
     }
 
+    std::pair<Object::Iterator, Pointer<Field>> Object::Release(Object::Iterator iterator)
+    {
+        Pointer<Field> oldValue = ogm::Copy(*iterator);
+        return std::make_pair(Remove(iterator), std::move(oldValue));
+    }
+
+    Pointer<Field> Object::Replace(ValueType::iterator iterator, Pointer<Field> &&field)
+    {
+        Pointer<Field> oldValue = ogm::Copy(*iterator);
+        value_.insert(value_.erase(iterator), std::move(field));
+        return std::move(oldValue);
+    }
+
     void ogm::Object::Clear()
     {
         value_.clear();
