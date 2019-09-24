@@ -2,6 +2,9 @@
 #define REST_NODE_H
 
 #include <ara/rest/support_type.h>
+#include <ara/rest/ogm/util.h>
+#include <ara/rest/ogm/serializer/serializer.h>
+#include <ara/rest/ogm/serializer/serializer_factory.h>
 
 namespace ara
 {
@@ -78,6 +81,19 @@ namespace ogm
          * \satisfy [SWS_REST_02094] Syntax Requirement for ara::rest::ogm::Node::HasParent.
          */
         bool HasParent() const;
+
+        bool IsInt() const      { return type_ == NodeType::Int; }
+        bool IsReal() const     { return type_ == NodeType::Real; }
+        bool IsString() const   { return type_ == NodeType::String; }
+        bool IsBool() const     { return type_ == NodeType::Bool; }
+        bool IsArray() const    { return type_ == NodeType::Array; }
+        bool IsObject() const   { return type_ == NodeType::Object; }
+        bool IsField() const    { return type_ == NodeType::Field; }
+
+        ara::rest::String Serialize()
+        {
+            return Serializer::Serialize(this);
+        }
 
     protected:
         /**
