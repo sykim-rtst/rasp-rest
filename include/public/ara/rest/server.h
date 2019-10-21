@@ -9,6 +9,7 @@
 #include <ara/rest/header.h>
 #include <ara/rest/uri.h>
 #include <ara/rest/support_type.h>
+#include <ara/rest/ogm/object.h>
 
 namespace ara
 {
@@ -17,6 +18,7 @@ namespace rest
     class ServerRequest;
     class ServerReply;
     class ServerEvent;
+    class ServerProtocolBinder;
 
     /**
      * @unsatiafy   [SWS_REST_01501] ara::rest::Server maintains all resources related to communication with a peer.
@@ -129,6 +131,41 @@ namespace rest
 
     private:
         std::vector<Pointer<ServerProtocolBinder>> bindings_;
+    };
+
+    class ServerProtocolBinder
+    {
+    public:
+        virtual ~ServerProtocolBinder() = default;
+
+    public:
+        /**
+         * \brief   Instruct a server to begin serving clients.
+         */
+        virtual Task<void> Start(StartupPolicy policy = StartupPolicy::kDetached) = 0;
+
+        /**
+         * \brief   Instructs a server to stop serving clients.
+         */
+        virtual Task<void> Stop(ShutdownPolicy policy = ShutdownPolicy::kGraceful) = 0;
+
+        /**
+         * \brief   Registers a user-defined subscription handler.
+         */
+        virtual void ObserveSubscriptions(
+                const Function<Server::SubscriptionHandlerType> &subscriptionHandler,
+                const Function<Server::SubscriptionStateHandlerType> &subscriptionStateHandler
+        ) = 0;
+
+        /**
+         * \brief   Obtain server status.
+         */
+        virtual ErrorCode GetError() const = 0;
+
+        /**
+         * \brief   Observe status changes.
+         */
+        virtual void ObserveError(const Function<void(ErrorCode)> &handler) = 0;
     };
 
     class ServerRequest
