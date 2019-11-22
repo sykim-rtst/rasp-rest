@@ -5,6 +5,7 @@
 #include <ara/rest/header.h>
 #include <ara/rest/uri.h>
 #include <ara/rest/support_type.h>
+#include <ara/rest/ogm/object.h>
 
 namespace ara
 {
@@ -14,6 +15,7 @@ namespace rest
     class Request;
     class Reply;
     class Event;
+    class ClientProtocolBinder
 
     class Client
     {
@@ -108,6 +110,55 @@ namespace rest
          * \satisfy [SWS_REST_02012=6] Syntax Requirement for ara::rest::Client::ObserveError.
          */
         void ObserveError(const Function<void(ErrorCode)> &handler);
+
+    private:
+        Pointer<ClientProtocolBinder> binding_;
+    };
+
+    class ClientProtocolBinder
+    {
+    public:
+        /**
+         * \brief   Requests a client startup.
+         */
+        virtual Task<void> Start() = 0;
+
+        /**
+         * \brief   Requests a client shutdown.
+         */
+        virtual Task<void> Stop(ShutdownPolicy policy) = 0;
+
+        /**
+         * \brief   Issues a request to a peer.
+         */
+        virtual Task<Pointer<Reply>> Send(const Request &request) = 0;
+
+        /**
+         * \brief   Performs an event subscription.
+         */
+        /*
+       virtual Task<Event> Subscribe(const Uri &uri,
+                             EventPolicy policy,
+                             const Function<Client::NotificationHandlerType> &notify,
+                             const Function<Client::SubscriptionStateHandlerType> &state = {}) = 0;
+        */
+        /**
+         * \brief   Obtain client status.
+         */
+        virtual ErrorCode GetError() const = 0;
+
+        /**
+         * \brief   Observe status changes.
+         */
+        virtual void ObserveError(const Function<void(ErrorCode)> &handler) = 0;
+
+    public:
+        virtual ~ClientProtocolBinder() = default;
+
+    protected:
+        ClientProtocolBinder() = default;
+
+        friend Client;
     };
 
     class Request
