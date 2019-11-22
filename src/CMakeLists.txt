@@ -3,7 +3,10 @@ set(REST_SOURECE_DIR ${PROJECT_SOURCE_DIR}/src)
 set(REST_OGM_SOURECE_DIR ${PROJECT_SOURCE_DIR}/src/ogm)
 set(REST_OGM_SERIALIZER_SOURECE_DIR ${PROJECT_SOURCE_DIR}/src/ogm/serializer)
 
-include_directories(/usr/local/include/ include/public/)
+include_directories(/usr/local/include/ include/public/ include/internal/)
+
+find_library(POCO_FOUNDATION PocoFoundation)
+find_library(POCO_NET PocoNet)
 
 file(GLOB SRC_FILES
         ${REST_SOURECE_DIR}/*.cpp
@@ -17,3 +20,5 @@ target_include_directories(
         PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/public/>
 )
+
+target_link_libraries(${LIBRARY_NAME} ${POCO_FOUNDATION} ${POCO_NET})
